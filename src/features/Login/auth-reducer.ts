@@ -1,4 +1,4 @@
-import { Dispatch } from 'redux'
+import {Dispatch} from 'redux'
 import {setAppStatusAC} from '../../app/app-reducer'
 import {authAPI} from "../../api/todolists-api";
 import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
@@ -8,17 +8,16 @@ const initialState = {
     isLoggedIn: false
 }
 
-//type InitialStateType = typeof initialState
+type InitialStateType = typeof initialState
 
 const slice = createSlice({
     name: 'auth',
     initialState: initialState,
     reducers: {
-        setIsLoggedInAC(state, action: PayloadAction<{value: boolean}>) {
-             state.isLoggedIn = action.payload.value
+        setIsLoggedInAC(state: InitialStateType, action: PayloadAction<{ value: boolean }>) {
+            state.isLoggedIn = action.payload.value
         }
     }
-
 })
 
 export const {setIsLoggedInAC} = slice.actions;
@@ -36,12 +35,12 @@ export const authReducer = slice.reducer; /*(state: InitialStateType = initialSt
 
 // thunks
 export const loginTC = (data: any) => (dispatch: Dispatch) => {
-    dispatch(setAppStatusAC('loading'))
+    dispatch(setAppStatusAC({status: 'loading'}))
     authAPI.login(data)
         .then((res) => {
             if (res.data.resultCode === 0) {
-                dispatch(setIsLoggedInAC({value: false}));
-                dispatch(setAppStatusAC('succeeded'))
+                dispatch(setIsLoggedInAC({value: true}));
+                dispatch(setAppStatusAC({status: 'succeeded'}))
             } else {
                 handleServerAppError(res.data, dispatch)
             }
@@ -53,12 +52,12 @@ export const loginTC = (data: any) => (dispatch: Dispatch) => {
 
 
 export const logout = () => (dispatch: Dispatch) => {
-    dispatch(setAppStatusAC('loading'))
+    dispatch(setAppStatusAC({status: 'loading'}))
     authAPI.logout()
         .then((res) => {
             if (res.data.resultCode === 0) {
                 dispatch(setIsLoggedInAC({value: false}));
-                dispatch(setAppStatusAC('succeeded'))
+                dispatch(setAppStatusAC({status: 'succeeded'}))
             } else {
                 handleServerAppError(res.data, dispatch);
             }
